@@ -7,8 +7,8 @@ mongoose.connect('mongodb://localhost/hackernews-gql', {
   useUnifiedTopology: true
 })
 
-const Link = new mongoose.model('Link', {
-  description: {
+const LinkSchema = new mongoose.Schema({
+   description: {
     type: String,
     required: 'Description is required'
   },
@@ -22,7 +22,14 @@ const Link = new mongoose.model('Link', {
   }
 })
 
-const User = new mongoose.model('User', {
+LinkSchema.pre('findOne', function(next) {
+  this.populate('postedBy');
+  next();
+})
+
+const Link = new mongoose.model('Link', LinkSchema);
+
+const UserSchema = new mongoose.Schema({
   name: {
     type: String,
     required: 'Name is required'
@@ -45,6 +52,8 @@ const User = new mongoose.model('User', {
     }
   ]
 })
+
+const User = new mongoose.model('User', UserSchema);
 
 
 module.exports = {mongoose, Link, User};
