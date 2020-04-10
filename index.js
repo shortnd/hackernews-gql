@@ -21,6 +21,8 @@ const resolvers = {
 const server = new ApolloServer({
   typeDefs,
   resolvers,
+  introspection: process.env.INTRO ? process.env.INTRO : false,
+  playground: process.env.PLAYGROUND ? process.env.PLAYGROUND : false,
   context: ({ req, connection }) => {
     if (connection) {
       return { ...connection.context };
