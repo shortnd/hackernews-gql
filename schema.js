@@ -9,11 +9,12 @@ const typesDef = gql`
   }
 
   type Mutation {
-    post(url: String!, description: String!): Link!
+    addLink(url: String!, description: String!): Link!
     updateLink(id: ID!, url: String, description: String): Link
     deleteLink(id: ID!): Link
     signup(email: String!, password: String!, name: String!): AuthPayload
     login(email: String!, password: String!): AuthPayload
+    deleteUser(id: ID!): User
   }
 
   type Link {

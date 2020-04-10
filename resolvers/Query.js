@@ -1,22 +1,16 @@
 const { getUserById } = require('../utils');
 const { Link, User } = require('../db');
 
-async function feed(parent, args, context, info) {
-  return await Link.find({});
-}
+const { feed } = require('../links/resolvers/Query');
+const { me } = require('../users/resolvers/Query');
 
-async function me(parent, args, context, info) {
-  try {
-    const userId = await getUserById(context);
-    const user = await User.findById(userId);
-    return user;
-  } catch (e) {
-    console.error(e);
-    return {};
-  }
-}
-
-module.exports = {
+const Query = {
+  // Links
   feed,
+  // User
   me
 }
+
+
+
+module.exports = Query

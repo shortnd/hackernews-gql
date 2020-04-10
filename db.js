@@ -20,7 +20,13 @@ const LinkSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
   }
-})
+});
+
+LinkSchema.pre('remove', async function(next) {
+  const user = await User.findById(this.postedBy)
+  await user.links.remove(this.id)
+  next();
+});
 
 const Link = new mongoose.model('Link', LinkSchema);
 
@@ -46,6 +52,11 @@ const UserSchema = new mongoose.Schema({
       ref: 'Link'
     }
   ]
+})
+
+UserSchema.pre('remove', async function(next) {
+  // console.log(this.)
+  next();
 })
 
 const User = new mongoose.model('User', UserSchema);
