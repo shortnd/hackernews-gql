@@ -22,11 +22,6 @@ const LinkSchema = new mongoose.Schema({
   }
 })
 
-LinkSchema.pre('findOne', function(next) {
-  this.populate('postedBy');
-  next();
-})
-
 const Link = new mongoose.model('Link', LinkSchema);
 
 const UserSchema = new mongoose.Schema({

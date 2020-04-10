@@ -5,6 +5,7 @@ const typesDef = gql`
     info: String!
     feed: [Link!]!
     link(id: ID!): Link
+    me: User
   }
 
   type Mutation {

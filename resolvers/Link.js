@@ -1,9 +1,7 @@
-const { Link } = require('../db');
+const { Link, User } = require('../db');
 
 async function postedBy(parent) {
-  const link = await Link.findById(parent.id).populate('postedBy').exec();
-  console.log(link.postedBy.name);
-  return link;
+  return await User.findById(parent.postedBy);
 }
 
 module.exports = {
