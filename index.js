@@ -1,40 +1,40 @@
-const { ApolloServer, gql } = require('apollo-server');
-const typeDefs = require('./schema');
+const { ApolloServer } = require("apollo-server");
+const typeDefs = require("./schema");
 
-const { mongoose } = require('./db');
-const Query = require('./resolvers/Query');
-const Mutation = require('./resolvers/Mutation');
-const User = require('./resolvers/User');
-const Link = require('./resolvers/Link');
+const { mongoose } = require("./db");
+const { LINK_ADDED, pubsub } = require("./utils");
+const Subscription = require("./resolvers/Subscription");
+const Query = require("./resolvers/Query");
+const Mutation = require("./resolvers/Mutation");
+const User = require("./resolvers/User");
+const Link = require("./resolvers/Link");
+const Vote = require("./resolvers/Vote");
 
-let links = [{
-  id: 'link-0',
-  url: 'www.howtographql.com',
-  description: 'Fullstack tutorial for GraphQL'
-}]
-
-let idCount = links.length;
 const resolvers = {
+  Subscription,
   Query,
   Mutation,
   User,
-  Link
-}
+  Link,
+  Vote,
+};
 
 const server = new ApolloServer({
   typeDefs,
   resolvers,
-  context: ({ req }) => {
-    return {...req.headers }
-    // return req
-  }
+  context: ({ req, connection }) => {
+    if (connection) {
+      return { ...connection.context };
+    } else {
+      return { ...req.headers };
+    }
+  },
 });
 
 const db = mongoose.connection;
-db.on('error', console.error.bind(console, 'connecton error'));
-db.once('open', () => {
+db.on("error", console.error.bind(console, "connecton error"));
+db.once("open", () => {
   server.listen().then(({ url }) => {
-    console.log(`Sever listening on ${url}`)
+    console.log(`Sever listening on ${url}`);
   });
-})
-
+});

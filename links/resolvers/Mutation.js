@@ -1,17 +1,18 @@
-const { User, Link } = require('../../db');
-const { getUserById } = require('../../utils');
+const { User, Link } = require("../../db");
+const { getUserById, LINK_ADDED, pubsub } = require("../../utils");
 
 async function addLink(parent, { url, description }, context, info) {
   const userId = getUserById(context);
-  const link =  await Link.create({
+  const link = await Link.create({
     url,
     description,
-    postedBy: userId
+    postedBy: userId,
   });
+  pubsub.publish(LINK_ADDED, { newLink: link });
   const user = await User.findById(userId);
   await user.update({
-    links: [...user.links, link.id]
-  })
+    links: [...user.links, link.id],
+  });
   return link;
 }
 
@@ -20,11 +21,11 @@ async function updateLink(parent, args, context, info) {
   const userIdPromise = getUserById(context);
   let [link, userId] = await Promise.all([linkPromise, userIdPromise]);
   if (userId != link.postedBy) {
-    throw new Error('You can not edit this link');
+    throw new Error("You can not edit this link");
   }
-  Object.keys(args).forEach(key => {
-    link[key] = args[key]
-  })
+  Object.keys(args).forEach((key) => {
+    link[key] = args[key];
+  });
   await link.save();
   return link;
 }
@@ -34,7 +35,7 @@ async function deleteLink(parent, args, context) {
   const userIdPromise = getUserById(context);
   const [link, userId] = await Promise.all([linkPromise, userIdPromise]);
   if (link.postedBy != userId) {
-    throw new Error('You can not delete this link');
+    throw new Error("You can not delete this link");
   }
   await link.remove();
   return link;
@@ -43,5 +44,5 @@ async function deleteLink(parent, args, context) {
 module.exports = {
   addLink,
   updateLink,
-  deleteLink
-}
+  deleteLink,
+};

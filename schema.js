@@ -1,6 +1,11 @@
-const { gql } = require('apollo-server');
+const { gql } = require("apollo-server");
 
 const typesDef = gql`
+  type Subscription {
+    newLink: Link
+    newVote: Vote
+  }
+
   type Query {
     info: String!
     feed: [Link!]!
@@ -15,6 +20,7 @@ const typesDef = gql`
     signup(email: String!, password: String!, name: String!): AuthPayload
     login(email: String!, password: String!): AuthPayload
     deleteUser(id: ID!): User
+    vote(linkId: ID!): Vote
   }
 
   type Link {
@@ -22,6 +28,7 @@ const typesDef = gql`
     description: String!
     url: String!
     postedBy: User!
+    votes: [Vote!]!
   }
 
   type AuthPayload {
@@ -34,6 +41,13 @@ const typesDef = gql`
     name: String!
     email: String!
     links: [Link!]!
+    votes: [Vote!]!
   }
-`
-module.exports = typesDef
+
+  type Vote {
+    id: ID!
+    link: Link!
+    user: User!
+  }
+`;
+module.exports = typesDef;
