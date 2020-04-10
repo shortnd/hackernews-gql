@@ -1,6 +1,15 @@
 const { gql } = require("apollo-server");
 
 const typesDef = gql`
+  enum LinkOrderByInput {
+    description_ASC
+    description_DESC
+    url_ASC
+    url_DESC
+    createdAt_ASC
+    createdAt_DESC
+  }
+
   type Subscription {
     newLink: Link
     newVote: Vote
@@ -8,7 +17,12 @@ const typesDef = gql`
 
   type Query {
     info: String!
-    feed: [Link!]!
+    feed(
+      filter: String
+      skip: Int
+      limit: Int
+      orderBy: LinkOrderByInput
+    ): Feed!
     link(id: ID!): Link
     me: User
   }
@@ -29,6 +43,12 @@ const typesDef = gql`
     url: String!
     postedBy: User!
     votes: [Vote!]!
+    createdAt: String
+  }
+
+  type Feed {
+    links: [Link!]!
+    count: Int!
   }
 
   type AuthPayload {
