@@ -70,4 +70,5 @@ const typesDef = gql`
     user: User!
   }
 `;
+
 module.exports = typesDef;

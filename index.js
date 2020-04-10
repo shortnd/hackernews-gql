@@ -2,7 +2,6 @@ const { ApolloServer } = require("apollo-server");
 const typeDefs = require("./schema");
 
 const { mongoose } = require("./db");
-const { LINK_ADDED, pubsub } = require("./utils");
 const Subscription = require("./resolvers/Subscription");
 const Query = require("./resolvers/Query");
 const Mutation = require("./resolvers/Mutation");
@@ -34,7 +33,11 @@ const server = new ApolloServer({
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "connecton error"));
 db.once("open", () => {
-  server.listen().then(({ url }) => {
-    console.log(`Sever listening on ${url}`);
-  });
+  server
+    .listen({
+      port: process.env.PORT || 4000,
+    })
+    .then(({ url }) => {
+      console.log(`Sever listening on ${url}`);
+    });
 });
